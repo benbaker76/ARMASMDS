@@ -1,0 +1,717 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+<title>ARM - The Acorn RISC Machine</title>
+</head>
+
+<body vlink="#808080" text="#000000" link="#808080" bgcolor="#E8E8E8" alink="#808080"><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<style type="text/css">
+body {
+  margin-top:0 !important;
+  padding-top:0 !important;
+  /*min-width:800px !important;*/
+}
+.wb-autocomplete-suggestions {
+    text-align: left; cursor: default; border: 1px solid #ccc; border-top: 0; background: #fff; box-shadow: -1px 1px 3px rgba(0,0,0,.1);
+    position: absolute; display: none; z-index: 2147483647; max-height: 254px; overflow: hidden; overflow-y: auto; box-sizing: border-box;
+}
+.wb-autocomplete-suggestion { position: relative; padding: 0 .6em; line-height: 23px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.02em; color: #333; }
+.wb-autocomplete-suggestion b { font-weight: bold; }
+.wb-autocomplete-suggestion.selected { background: #f0f0f0; }
+</style>
+
+<p>&nbsp;</p>
+
+<table width="526" height="65" cellspacing="1" cellpadding="3" border="0" bgcolor="#000000">
+  <tbody><tr>
+    <td width="94" valign="top" height="30" bgcolor="#FFFFFF"><big>History</big></td>
+    <td width="424" valign="top" height="30" bgcolor="#FFFFFF">The original ARM design was a
+    stroke of pure genious that was decades ahead of it's time. The development started in
+    1983 and the first chips were produced two years later.<p>Today it is everywhere but the
+    original beauty has faded somewhat as different attempts at improvement have been done.
+    The original instructionset will live on as it is timeless.</p></td>
+  </tr>
+</tbody></table>
+
+<p>&nbsp; &nbsp; &nbsp; &nbsp; </p>
+
+<table width="423" cellspacing="1" cellpadding="3" bordercolor="#000000" border="0" bgcolor="#000000">
+<tbody>
+  <tr>
+    <td width="189" bgcolor="#FFFFFF"><strong>Hardware vectors</strong></td>
+    <td width="218" bgcolor="#FFFFFF"><strong>Possible contents (Acorn)</strong></td>
+  </tr>
+  <tr>
+    <td width="189" bgcolor="#FFFFFF">&amp;00 Reset</td>
+    <td width="218" bgcolor="#FFFFFF">B branchThru0error</td>
+  </tr>
+  <tr>
+    <td width="189" bgcolor="#FFFFFF">&amp;04 Undefined instruction</td>
+    <td width="218" bgcolor="#FFFFFF">LDR PC,UndHandler</td>
+  </tr>
+  <tr>
+    <td width="189" bgcolor="#FFFFFF">&amp;08 SWI</td>
+    <td width="218" bgcolor="#FFFFFF">B decodeSWI</td>
+  </tr>
+  <tr>
+    <td width="189" bgcolor="#FFFFFF">&amp;0C Prefetch abort</td>
+    <td width="218" bgcolor="#FFFFFF">LDR PC,PabHandler</td>
+  </tr>
+  <tr>
+    <td width="189" bgcolor="#FFFFFF">&amp;10 Data abort</td>
+    <td width="218" bgcolor="#FFFFFF">LDR PC,DabHandler</td>
+  </tr>
+  <tr>
+    <td width="189" bgcolor="#FFFFFF">&amp;14 Address exception</td>
+    <td width="218" bgcolor="#FFFFFF">LDR PC,AexHandler</td>
+  </tr>
+  <tr>
+    <td width="189" bgcolor="#FFFFFF">&amp;18 IRQ</td>
+    <td width="218" bgcolor="#FFFFFF">B handleIRQ</td>
+  </tr>
+  <tr>
+    <td width="189" bgcolor="#FFFFFF">&amp;1C FIQ</td>
+    <td width="218" bgcolor="#FFFFFF">FIQ code...</td>
+  </tr>
+</tbody>
+</table>
+
+<p align="center">&nbsp;</p>
+
+<table width="55%" cellspacing="1" cellpadding="3" border="0" bgcolor="#000000">
+  <tbody><tr>
+    <td colspan="3" width="100%" bgcolor="#FFFFFF">The Processor Status Register (PSR) is the
+    8 bits MMNZCVIF. (ROL #6)<br>
+    The Program Counter (PC) is the 24 address bits.</td>
+  </tr>
+  <tr>
+    <td colspan="3" width="52%" bgcolor="#FFFFFF" align="center"><p align="left"><strong>Register
+    15 </strong>(PC)<strong> definition:<br>
+    </strong><small>MSB</small> NZCVIFAAAAAAAAAAAAAAAAAAAAAAAAMM <small>LSB</small></p></td>
+  </tr>
+  <tr>
+    <td width="1%" bgcolor="#FFFFFF" align="center">N</td>
+    <td colspan="2" width="55%" bgcolor="#FFFFFF">Negative flag</td>
+  </tr>
+  <tr>
+    <td width="1%" bgcolor="#FFFFFF" align="center">Z</td>
+    <td colspan="2" width="55%" bgcolor="#FFFFFF">Zero flag</td>
+  </tr>
+  <tr>
+    <td width="1%" bgcolor="#FFFFFF" align="center">C</td>
+    <td colspan="2" width="55%" bgcolor="#FFFFFF">Carry flag</td>
+  </tr>
+  <tr>
+    <td width="1%" bgcolor="#FFFFFF" align="center">V</td>
+    <td colspan="2" width="55%" bgcolor="#FFFFFF">Overflow flag</td>
+  </tr>
+  <tr>
+    <td width="1%" bgcolor="#FFFFFF" align="center">I</td>
+    <td colspan="2" width="55%" bgcolor="#FFFFFF">Interrupt request disable</td>
+  </tr>
+  <tr>
+    <td width="1%" bgcolor="#FFFFFF" align="center">F</td>
+    <td colspan="2" width="55%" bgcolor="#FFFFFF">Fast interrupt request disable</td>
+  </tr>
+  <tr>
+    <td width="1%" bgcolor="#FFFFFF" align="center">A</td>
+    <td colspan="2" width="55%" bgcolor="#FFFFFF">Address bits. The two LSBs are always zero,
+    so they are used as mode bits.</td>
+  </tr>
+  <tr>
+    <td width="1%" valign="top" bgcolor="#FFFFFF" align="center">M</td>
+    <td width="33%" valign="top" bgcolor="#FFFFFF"><strong><a name="Mode">Mode bits</a></strong><br>
+    "00"&nbsp; User mode (USR mode)<br>
+    "01"&nbsp; Fast interrupt processing mode (FIQ)<br>
+    "10"&nbsp; Interrupt processing mode (IRQ)<br>
+    "11"&nbsp; Supervisor mode (SVC)</td>
+    <td width="22%" valign="top" bgcolor="#FFFFFF"><strong>Private registers</strong><p>R8 -
+    R14<br>
+    R13, R14<br>
+    R13, R14</p></td>
+  </tr>
+</tbody></table>
+
+<p align="center"><br>
+</p>
+
+<table width="45%" cellspacing="1" cellpadding="3" border="0" bgcolor="#000000">
+  <tbody><tr>
+    <td width="100%" bgcolor="#FFFFFF"><strong>The instruction set<br>
+    </strong>Description syntax:<br>
+    &nbsp; &lt;&gt; Optional.<br>
+    &nbsp; (x|y) Either x or y but not both.<br>
+    &nbsp; #exp Expression.<br>
+    &nbsp; Rn Register number(0-15).<br>
+    <br>
+    &lt;shift&gt; indicates one of the following:<br>
+    &nbsp; ASL (Rn|#exp) Arithmetic shift left by contents of Rn or #exp<br>
+    &nbsp; LSL (Rn|#exp) Logical shift left.<br>
+    &nbsp; ASR (Rn|#exp) Arithmetic shift right.<br>
+    &nbsp; LSR (Rn|#exp) Logical shift right.<br>
+    &nbsp; ROR (Rn|#exp) Rotate right.<br>
+    &nbsp; RRX Rotate right one bit with extend. LSB -&gt; C, C -&gt; MSB<br>
+    &nbsp; ASL and LSL are the same, but LSL is preferred.<br>
+    &nbsp; #exp has a range of 0-31.</td>
+  </tr>
+</tbody></table>
+
+<p align="center"><br>
+</p>
+<div align="left">
+
+<table width="58%" height="550" cellspacing="1" cellpadding="3" bordercolor="#000000" border="0" bgcolor="#000000">
+<tbody>
+  <tr>
+    <td colspan="3" width="100%" height="21" bgcolor="#FFFFFF"><p align="center"><strong>Condition
+    codes </strong>&lt;cond&gt;</p></td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">AL</td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Always</td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">This is the default</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">CC</td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Carry clear</td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">C=0</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">CS</td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Carry set</td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">C=1</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">EQ</td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Equal</td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">Z=1</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">GE</td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Greater than or equal</td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">N=V</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">GT </td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Greater than</td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">N=V and Z=0</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">HI</td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Higher (unsigned)</td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">C=1 and Z=0</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">LE </td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Less than or equal</td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">N&lt;&gt;V or Z=1</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">LS </td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Lower or same (unsigned)</td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">C=0 or Z=1</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">LT</td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Less than </td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">N&lt;&gt;V</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">MI</td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Negative </td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">N=1</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">NE </td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Not equal </td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">Z=0</td>
+  </tr>
+  <tr>
+    <td width="7%" height="20" bgcolor="#FFFFFF">NV</td>
+    <td width="41%" height="20" bgcolor="#FFFFFF">Never </td>
+    <td width="52%" height="20" bgcolor="#FFFFFF">** Do not use **</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">PL</td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Positive </td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">N=0</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">VC</td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Overflow clear</td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">V=0</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">VS</td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Overflow set </td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">V=1</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">LO</td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Lower (unsigned)</td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">Same as CC</td>
+  </tr>
+  <tr>
+    <td width="7%" height="21" bgcolor="#FFFFFF">HS</td>
+    <td width="41%" height="21" bgcolor="#FFFFFF">Higher/same (unsigned)</td>
+    <td width="52%" height="21" bgcolor="#FFFFFF">Same as CS</td>
+  </tr>
+</tbody>
+</table>
+</div>
+
+<p align="center"><br>
+<br>
+</p>
+<div align="left">
+
+<table width="509" height="275" cellspacing="1" cellpadding="3" bordercolor="#000000" border="0" bgcolor="#000000">
+<tbody>
+  <tr>
+    <td colspan="3" width="491" height="13" bgcolor="#FFFFFF"><strong>Arithmetic and logical
+    instructions<br>
+    </strong>opcode&lt;cond&gt;&lt;S&gt; Rd,&lt;Rn&gt;,(#exp|Rm&lt;,shift&gt;)<br>
+    #exp has a range of X ROR N*2&nbsp;where X=0-255 and N=0-15</td>
+  </tr>
+  <tr>
+    <td width="69" height="12" bgcolor="#FFFFFF">ADC</td>
+    <td width="188" height="12" bgcolor="#FFFFFF">Add with carry</td>
+    <td width="234" height="12" bgcolor="#FFFFFF">Rd=Rn+Rm+C</td>
+  </tr>
+  <tr>
+    <td width="69" height="25" bgcolor="#FFFFFF">ADD</td>
+    <td width="188" height="25" bgcolor="#FFFFFF">Add</td>
+    <td width="234" height="25" bgcolor="#FFFFFF">Rd=Rn+Rm</td>
+  </tr>
+  <tr>
+    <td width="69" height="25" bgcolor="#FFFFFF">SBC </td>
+    <td width="188" height="25" bgcolor="#FFFFFF">Subtract with carry</td>
+    <td width="234" height="25" bgcolor="#FFFFFF">Rd=Rn-Rm-(1-C)</td>
+  </tr>
+  <tr>
+    <td width="69" height="25" bgcolor="#FFFFFF">SUB</td>
+    <td width="188" height="25" bgcolor="#FFFFFF">Subtract</td>
+    <td width="234" height="25" bgcolor="#FFFFFF">Rd=Rn-Rm</td>
+  </tr>
+  <tr>
+    <td width="69" height="25" bgcolor="#FFFFFF">RSC</td>
+    <td width="188" height="25" bgcolor="#FFFFFF">Reverse subtract with carry</td>
+    <td width="234" height="25" bgcolor="#FFFFFF">Rd=Rm-Rn-(1-C)</td>
+  </tr>
+  <tr>
+    <td width="69" height="25" bgcolor="#FFFFFF">RSB</td>
+    <td width="188" height="25" bgcolor="#FFFFFF">Reverse subtract</td>
+    <td width="234" height="25" bgcolor="#FFFFFF">Rd=Rm-Rn</td>
+  </tr>
+  <tr>
+    <td width="69" height="25" bgcolor="#FFFFFF">AND</td>
+    <td width="188" height="25" bgcolor="#FFFFFF">Bitwise AND </td>
+    <td width="234" height="25" bgcolor="#FFFFFF">Rd=Rn AND Rm</td>
+  </tr>
+  <tr>
+    <td width="69" height="25" bgcolor="#FFFFFF">BIC</td>
+    <td width="188" height="25" bgcolor="#FFFFFF">Bitwise AND NOT</td>
+    <td width="234" height="25" bgcolor="#FFFFFF">Rd=Rn AND (NOT Rm)</td>
+  </tr>
+  <tr>
+    <td width="69" height="25" bgcolor="#FFFFFF">ORR</td>
+    <td width="188" height="25" bgcolor="#FFFFFF">Bitwise OR Register</td>
+    <td width="234" height="25" bgcolor="#FFFFFF">Rd=Rn OR Rm</td>
+  </tr>
+  <tr>
+    <td width="69" height="25" bgcolor="#FFFFFF">EOR</td>
+    <td width="188" height="25" bgcolor="#FFFFFF">Bitwise EOR</td>
+    <td width="234" height="25" bgcolor="#FFFFFF">Rd=Rn EOR Rm</td>
+  </tr>
+  <tr>
+    <td width="69" height="13" bgcolor="#FFFFFF">MOV</td>
+    <td width="188" height="13" bgcolor="#FFFFFF">Move</td>
+    <td width="234" height="13" bgcolor="#FFFFFF">Rd=Rm</td>
+  </tr>
+</tbody>
+  <tbody><tr>
+    <td width="69" height="6" bgcolor="#FFFFFF">MVN</td>
+    <td width="188" height="6" bgcolor="#FFFFFF">Move NOT</td>
+    <td width="234" height="6" bgcolor="#FFFFFF">Rd=NOT Rm</td>
+  </tr>
+  <tr>
+    <td colspan="3" width="491" height="6" bgcolor="#FFFFFF">If the "S" is present
+    the condition codes may be altered.<br>
+    The condition codes N,Z,C,V are set by the ALU in arithmetic operations.<br>
+    The bitwise operations set N and Z from the ALU and C from the shifter.<br>
+    <br>
+    Special actions are taken if any of the source registers are R15:<br>
+    If Rm=R15 all 32 bits of R15(PC+PSR) are used in the operation.<br>
+    If Rn=R15 only the 24 bits of the PC are used in the operation.<br>
+    <br>
+    If the destination register is R15, then the action depends on "S"<br>
+    If "S" is not present only then 24 bits of the PC are used<br>
+    If "S" is present the whole result is written to R15, depending on mode.</td>
+  </tr>
+</tbody></table>
+</div>
+
+<p align="center"><br>
+</p>
+<div align="left">
+
+<table width="38%" cellspacing="1" cellpadding="3" bordercolor="#000000" border="0" bgcolor="#000000">
+<tbody>
+  <tr>
+    <td colspan="3" width="100%" bgcolor="#FFFFFF"><strong>Comparisons</strong><br>
+    opcode&lt;cond&gt;&lt;S|P&gt; Rn,(#exp|Rm&lt;,shift&gt;)</td>
+  </tr>
+  <tr>
+    <td width="16%" bgcolor="#FFFFFF">CMN</td>
+    <td width="28%" bgcolor="#FFFFFF">Compare</td>
+    <td width="56%" bgcolor="#FFFFFF">Rn+Rm</td>
+  </tr>
+  <tr>
+    <td width="16%" bgcolor="#FFFFFF">CMP</td>
+    <td width="28%" bgcolor="#FFFFFF">Compare</td>
+    <td width="56%" bgcolor="#FFFFFF">Rn-Rm</td>
+  </tr>
+  <tr>
+    <td width="16%" bgcolor="#FFFFFF">TEQ</td>
+    <td width="28%" bgcolor="#FFFFFF">Test equal</td>
+    <td width="56%" bgcolor="#FFFFFF">Rn EOR Rm</td>
+  </tr>
+  <tr>
+    <td width="16%" bgcolor="#FFFFFF">TST</td>
+    <td width="28%" bgcolor="#FFFFFF">Test</td>
+    <td width="56%" bgcolor="#FFFFFF">Rn AND Rm</td>
+  </tr>
+</tbody>
+  <tbody><tr>
+    <td colspan="3" width="100%" bgcolor="#FFFFFF">These are similar to the arithmetic and
+    logical instructions<br>
+    except that they do not take a destination register.<br>
+    "P" can set the PSR to a given value if in a privileged mode.</td>
+  </tr>
+</tbody></table>
+</div>
+
+<p align="center"><br>
+</p>
+<div align="left">
+
+<table width="37%" cellspacing="1" cellpadding="3" bordercolor="#000000" border="0" bgcolor="#000000">
+  <tbody><tr>
+    <td colspan="3" width="100%" bgcolor="#FFFFFF"><strong>Multiply instructions</strong><br>
+    opcode&lt;cond&gt;&lt;S&gt; Rd,Rm,Rs<br>
+    opcode&lt;cond&gt;&lt;S&gt; Rd,Rm,Rs,Rn</td>
+  </tr>
+  <tr>
+    <td width="16%" bgcolor="#FFFFFF">MUL</td>
+    <td width="28%" bgcolor="#FFFFFF">Multiply</td>
+    <td width="56%" bgcolor="#FFFFFF">Rd=Rm*Rs</td>
+  </tr>
+  <tr>
+    <td width="16%" bgcolor="#FFFFFF">MLA</td>
+    <td width="28%" bgcolor="#FFFFFF">Multiply-accumulate</td>
+    <td width="56%" bgcolor="#FFFFFF">Rd=Rm*Rs+Rn</td>
+  </tr>
+  <tr>
+    <td colspan="3" width="100%" bgcolor="#FFFFFF">Integer multiplication returns 32LSB of
+    product of two 32bit operands. Rd must not be R15 or same as Rm. Timing is dependent of
+    Rs. If "S" is given, N and Z are set on the result, C and V are undefined.</td>
+  </tr>
+</tbody></table>
+</div>
+
+<p align="center"><br>
+</p>
+<div align="left">
+
+<table width="57%" cellspacing="1" cellpadding="3" bordercolor="#000000" border="0" bgcolor="#000000">
+  <tbody><tr>
+    <td colspan="3" width="100%" bgcolor="#FFFFFF"><strong>Branching instructions<br>
+    </strong>opcode&lt;cond&gt; expression</td>
+  </tr>
+  <tr>
+    <td width="16%" bgcolor="#FFFFFF">B</td>
+    <td width="26%" bgcolor="#FFFFFF">Branch</td>
+    <td width="58%" bgcolor="#FFFFFF">PC = PC + expression</td>
+  </tr>
+  <tr>
+    <td width="16%" bgcolor="#FFFFFF">BL</td>
+    <td width="26%" bgcolor="#FFFFFF">Branch and link</td>
+    <td width="58%" bgcolor="#FFFFFF">R14 = PC + 4 &amp; PSR, PC = PC + expression</td>
+  </tr>
+</tbody></table>
+</div>
+
+<p align="center"><br>
+</p>
+<div align="left">
+
+<table width="57%" cellspacing="1" cellpadding="3" bordercolor="#000000" border="0" bgcolor="#000000">
+  <tbody><tr>
+    <td colspan="3" width="100%" bgcolor="#FFFFFF"><strong>Single register load/store
+    instructions</strong><br>
+    opcode&lt;cond&gt;&lt;B&gt;&lt;T&gt; Rd,(address|#exp)<br>
+    #exp has a range of +-4095 bytes.</td>
+  </tr>
+  <tr>
+    <td width="16%" bgcolor="#FFFFFF">LDR</td>
+    <td width="26%" bgcolor="#FFFFFF">Load Register</td>
+    <td width="58%" bgcolor="#FFFFFF">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="16%" bgcolor="#FFFFFF">STR</td>
+    <td width="26%" bgcolor="#FFFFFF">Store Register</td>
+    <td width="58%" bgcolor="#FFFFFF">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="3" width="100%" bgcolor="#FFFFFF">"B" Byte transfer.<br>
+    "T" Force address translation from a privileged mode. (Not pre-index!)<br>
+    "!" Update Rn after use </td>
+  </tr>
+</tbody></table>
+</div>
+
+<p align="center">&nbsp;</p>
+<div align="left">
+
+<table width="373" height="127" cellspacing="1" cellpadding="3" bordercolor="#000000" border="0" bgcolor="#000000">
+<tbody>
+  <tr>
+    <td width="166" height="1" bgcolor="#FFFFFF"><strong>&nbsp; pre-index</strong></td>
+    <td width="159" height="1" bgcolor="#FFFFFF"><strong>&nbsp; post-index</strong></td>
+  </tr>
+  <tr>
+    <td width="166" height="4" bgcolor="#FFFFFF">&nbsp; [Rn]</td>
+    <td width="159" height="4" bgcolor="#FFFFFF">&nbsp; </td>
+  </tr>
+  <tr>
+    <td width="166" height="7" bgcolor="#FFFFFF">&nbsp; [Rn, #exp]&lt;!&gt;</td>
+    <td width="159" height="7" bgcolor="#FFFFFF">&nbsp; [Rn], #exp</td>
+  </tr>
+  <tr>
+    <td width="166" height="9" bgcolor="#FFFFFF">&nbsp; [Rn, &lt;-&gt;Rm]&lt;!&gt;</td>
+    <td width="159" height="9" bgcolor="#FFFFFF">&nbsp; [Rn], &lt;-&gt;Rm</td>
+  </tr>
+  <tr>
+    <td width="166" height="6" bgcolor="#FFFFFF">&nbsp; [Rn, &lt;-&gt;Rm, shift #s]&lt;!&gt;</td>
+    <td width="159" height="6" bgcolor="#FFFFFF">&nbsp; [Rn], &lt;-&gt;Rm, shift #s</td>
+  </tr>
+</tbody>
+  <tbody><tr>
+    <td colspan="2" width="325" height="6" bgcolor="#FFFFFF">The PSR is never modified.<br>
+    The PSR flags are not used if Rn=R15. (PC is 8 bytes ahead, pipelining!)<br>
+    The PSR flags are used when the PC is used as Rm.</td>
+  </tr>
+</tbody></table>
+</div>
+
+<p align="center"><br>
+</p>
+<div align="left">
+
+<table width="57%" cellspacing="1" cellpadding="3" bordercolor="#000000" border="0" bgcolor="#000000">
+  <tbody><tr>
+    <td colspan="3" width="100%" bgcolor="#FFFFFF"><strong>Multiple load/store instructions<br>
+    </strong>opcode&lt;cond&gt;type Rn&lt;!&gt;,{Rlist}&lt;^&gt;</td>
+  </tr>
+  <tr>
+    <td width="16%" bgcolor="#FFFFFF">LDM</td>
+    <td width="26%" bgcolor="#FFFFFF">Load Registerlist</td>
+    <td width="58%" bgcolor="#FFFFFF">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="16%" bgcolor="#FFFFFF">STM</td>
+    <td width="26%" bgcolor="#FFFFFF">Store Registerlist</td>
+    <td width="58%" bgcolor="#FFFFFF">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="3" width="100%" bgcolor="#FFFFFF"><p align="left">"!" update Rn
+    after use <br>
+    For a load with R15 in the list "^" forces update of the PSR.<br>
+    Otherwise "^" forces the load/store to access the User mode registers.<br>
+    Rn is taken from the current bank, so update of Rn goes to the User bank.<br>
+    Rlist is a list of register to transfer in a low to high order.</p></td>
+  </tr>
+</tbody></table>
+</div>
+
+<p align="center"><br>
+</p>
+<div align="left">
+
+<table width="549" cellspacing="1" cellpadding="3" bordercolor="#000000" border="0" bgcolor="#000000">
+<tbody>
+  <tr>
+    <th colspan="4" width="545" bgcolor="#FFFFFF"><p align="center">The four types of multiple
+    transfer</p></th>
+  </tr>
+  <tr>
+    <td width="43" bgcolor="#FFFFFF">&nbsp; DA</td>
+    <td width="206" bgcolor="#FFFFFF">&nbsp; Decrement Rn After</td>
+    <td width="44" bgcolor="#FFFFFF">&nbsp; FD</td>
+    <td width="240" bgcolor="#FFFFFF">&nbsp; Full Descending stack</td>
+  </tr>
+  <tr>
+    <td width="43" bgcolor="#FFFFFF">&nbsp; DB</td>
+    <td width="206" bgcolor="#FFFFFF">&nbsp; Decrement Rn Before</td>
+    <td width="44" bgcolor="#FFFFFF">&nbsp; ED</td>
+    <td width="240" bgcolor="#FFFFFF">&nbsp; Empty Descending stack</td>
+  </tr>
+  <tr>
+    <td width="43" bgcolor="#FFFFFF">&nbsp; IA</td>
+    <td width="206" bgcolor="#FFFFFF">&nbsp; Increment Rn After</td>
+    <td width="44" bgcolor="#FFFFFF">&nbsp; FA</td>
+    <td width="240" bgcolor="#FFFFFF">&nbsp; Full Ascending stack</td>
+  </tr>
+  <tr>
+    <td width="43" bgcolor="#FFFFFF">&nbsp; IB</td>
+    <td width="206" bgcolor="#FFFFFF">&nbsp; Increment Rn Before</td>
+    <td width="44" bgcolor="#FFFFFF">&nbsp; EA</td>
+    <td width="240" bgcolor="#FFFFFF">&nbsp; Empty Ascending stack</td>
+  </tr>
+</tbody>
+  <tbody><tr>
+    <td colspan="4" width="533" bgcolor="#FFFFFF">In an empty stack the stack pointer points
+    to first free slot.<br>
+    In a full stack the&nbsp; stack pointer points to the last slot written to.<br>
+    An ascending stack grows from low to high memory addresses.<br>
+    A descending stack grows from high to low memory addresses.<br>
+    <br>
+    You can always load the base register(Rn).<br>
+    Only if Rn is the lowest register then the original Rn is stored.<br>
+    This will only have effect if you use "!".<br>
+    <br>
+    If R15 is in the Rlist:<br>
+    &nbsp; The PSR is saved with the PC, the PC is 12 bytes ahead.<br>
+    &nbsp; The PSR is only loaded if you use "^", the mode decides what to update.<br>
+    <br>
+    If R15 is used as Rn:<br>
+    &nbsp; The PSR is used as a part of the address!.<br>
+    &nbsp; Write back is switched off.</td>
+  </tr>
+</tbody></table>
+</div>
+
+<p align="center"><br>
+</p>
+<div align="left">
+
+<table width="57%" cellspacing="1" cellpadding="3" bordercolor="#000000" border="0" bgcolor="#000000">
+  <tbody><tr>
+    <td colspan="3" width="100%" bgcolor="#FFFFFF"><strong>SWI instruction</strong><br>
+    opcode&lt;cond&gt; &lt;expression&gt;</td>
+  </tr>
+  <tr>
+    <td width="16%" bgcolor="#FFFFFF">SWI</td>
+    <td width="26%" bgcolor="#FFFFFF">Software interrupt</td>
+    <td width="58%" bgcolor="#FFFFFF">&nbsp;</td>
+  </tr>
+  <tr>
+    <td colspan="3" width="100%" bgcolor="#FFFFFF"><p align="left">The R14_svc will be
+    corrupted if you execute a SWI in <a href="#Mode">SVC</a> mode.</p></td>
+  </tr>
+</tbody></table>
+</div>
+
+<p align="center"><br>
+</p>
+
+<table width="56%" cellspacing="1" cellpadding="3" border="0" bgcolor="#000000">
+  <tbody><tr>
+    <td colspan="2" width="100%" valign="top" bgcolor="#FFFFFF"><p align="center"><big>Sample
+    Code</big><br>
+    (If you can do improve on this then let us know!)</p></td>
+  </tr>
+  <tr>
+    <td width="43%" valign="top" bgcolor="#FFFFFF">Pseudorandom number generator</td>
+    <td width="57%" valign="top" bgcolor="#FFFFFF" align="left"><small><font face="Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sub &nbsp;&nbsp;&nbsp;&nbsp;r0,
+    r0, r0, ror #7</font></small></td>
+  </tr>
+  <tr>
+    <td width="43%" valign="top" bgcolor="#FFFFFF">Square root algorithm<br>
+    r0 = sqr(r1)</td>
+    <td width="57%" valign="top" bgcolor="#FFFFFF" align="left"><p align="left"><small><font face="Courier New">.sqr&nbsp;&nbsp; mov&nbsp;&nbsp;&nbsp;&nbsp; r0, #0<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mov&nbsp;&nbsp;&nbsp;&nbsp; r3, #1&lt;&lt;15<br>
+    .sl&nbsp;&nbsp;&nbsp; orr&nbsp;&nbsp;&nbsp;&nbsp; r0, r0, r3<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mul &nbsp;&nbsp;&nbsp; r2, r0, r0<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmp&nbsp;&nbsp;&nbsp;&nbsp; r2, r1<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bichi&nbsp;&nbsp; r0, r0, r3<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; movnes&nbsp; r3, r3, lsr #1<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bne &nbsp;&nbsp;&nbsp; sl<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mov&nbsp;&nbsp;&nbsp;&nbsp; pc, r14</font></small></p></td>
+  </tr>
+  <tr>
+    <td width="43%" valign="top" bgcolor="#FFFFFF">32 by 8 bit multiplication (ARM1)</td>
+    <td width="57%" valign="top" bgcolor="#FFFFFF" align="left"><small><font face="Courier New">.mul&nbsp;&nbsp; mov&nbsp;&nbsp;&nbsp;&nbsp; r2, #0<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; movs&nbsp;&nbsp;&nbsp; r0, r0, lsl #25<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addcs&nbsp;&nbsp; r2, r2, r1, lsl #7<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addmi&nbsp;&nbsp; r2, r2, r1, lsl #6<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; movs&nbsp;&nbsp;&nbsp; r0, r0, lsl #02<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addcs&nbsp;&nbsp; r2, r2, r1, lsl #5<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addmi&nbsp;&nbsp; r2, r2, r1, lsl #4<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; movs&nbsp;&nbsp;&nbsp; r0, r0, lsl #02<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addcs&nbsp;&nbsp; r2, r2, r1, lsl #3<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addmi&nbsp;&nbsp; r2, r2, r1, lsl #2<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; movs&nbsp;&nbsp;&nbsp; r0, r0, lsl #02<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addcs&nbsp;&nbsp; r2, r2, r1, lsl #1<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addmi&nbsp;&nbsp; r2, r2, r1, lsl #0<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mov&nbsp;&nbsp;&nbsp;&nbsp; pc, r14</font></small></td>
+  </tr>
+  <tr>
+    <td width="43%" valign="top" bgcolor="#FFFFFF">32 by 8 bit division</td>
+    <td width="57%" valign="top" bgcolor="#FFFFFF" align="left"><small><font face="Courier New">.div&nbsp;&nbsp; rsb &nbsp;&nbsp;&nbsp; r1, r1, #0<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mov&nbsp;&nbsp;&nbsp;&nbsp; r2, #0<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmn&nbsp;&nbsp;&nbsp;&nbsp; r0, r1, lsl #7<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r0, r0, r1, lsl #7<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r2, r2, #1&lt;&lt;7<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmn&nbsp;&nbsp;&nbsp;&nbsp; r0, r1, lsl #6<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r0, r0, r1, lsl #6<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r2, r2, #1&lt;&lt;6<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmn&nbsp;&nbsp;&nbsp;&nbsp; r0, r1, lsl #5<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r0, r0, r1, lsl #5<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r2, r2, #1&lt;&lt;5<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmn&nbsp;&nbsp;&nbsp;&nbsp; r0, r1, lsl #4<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r0, r0, r1, lsl #4<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r2, r2, #1&lt;&lt;4<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmn&nbsp;&nbsp;&nbsp;&nbsp; r0, r1, lsl #3<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r0, r0, r1, lsl #3<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r2, r2, #1&lt;&lt;3<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmn&nbsp;&nbsp;&nbsp;&nbsp; r0, r1, lsl #2<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r0, r0, r1, lsl #2<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r2, r2 ,#1&lt;&lt;2<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmn&nbsp;&nbsp;&nbsp;&nbsp; r0, r1, lsl #1<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r0, r0, r1, lsl #1<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r2, r2, #1&lt;&lt;1<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cmn&nbsp;&nbsp;&nbsp;&nbsp; r0, r1, lsl #0<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r0, r0, r1, lsl #0<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; addpl&nbsp;&nbsp; r2, r2, #1&lt;&lt;0<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mov&nbsp;&nbsp;&nbsp;&nbsp; pc, r14</font></small></td>
+  </tr>
+</tbody></table>
+
+<p align="center">&nbsp;</p>
+
+<p align="center">&nbsp;</p>
+
+
+
+</body></html>
+<!--
+     FILE ARCHIVED ON 11:29:46 Oct 08, 2018 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 03:37:28 Mar 02, 2020.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+-->
+<!--
+playback timings (ms):
+  captures_list: 81.509
+  exclusion.robots.policy: 0.36
+  load_resource: 132.286
+  exclusion.robots: 0.376
+  PetaboxLoader3.resolve: 36.184
+  esindex: 0.014
+  LoadShardBlock: 65.233 (3)
+  PetaboxLoader3.datanode: 129.758 (4)
+  CDXLines.iter: 12.333 (3)
+  RedisCDXSource: 0.573
+-->

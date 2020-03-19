@@ -1,0 +1,1 @@
+<Project name="showpic"><Folder name="include"></Folder><Folder name="source"><File path="source\main.s"></File><File path="source\libnds_exit.c"></File><File path="source\mpu_setup.s"></File></Folder><File path="Makefile"></File></Project>

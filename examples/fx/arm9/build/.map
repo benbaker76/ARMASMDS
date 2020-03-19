@@ -1,0 +1,612 @@
+Archive member included because of file (symbol)
+
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libg.a(lib_a-init.o)
+                              c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb/ds_arm9_crt0.o (__libc_init_array)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libsysbase.a(malloc_vars.o)
+                              c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb/ds_arm9_crt0.o (fake_heap_end)
+c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libsysbase.a(build_argv.o)
+                              c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb/ds_arm9_crt0.o (build_argv)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+rom              0x08000000         0x02000000
+ewram            0x02000000         0x003ff000
+dtcm             0x0b000000         0x00004000
+vectors          0x01000000         0x00000100
+itcm             0x01000100         0x00007f00
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+                0x01000000                __vectors_start = 0x1000000
+                0x01000100                __itcm_start = 0x1000100
+                0x023ff000                __ewram_end = 0x23ff000
+                0x023ff000                __eheap_end = 0x23ff000
+                0x0b000000                __dtcm_start = 0xb000000
+                0x0b004000                __dtcm_top = 0xb004000
+                0x0b003ff8                __irq_flags = (__dtcm_top - 0x8)
+                0x0b003ffc                __irq_vector = (__dtcm_top - 0x4)
+                0x0b003f00                __sp_svc = (__dtcm_top - 0x100)
+                0x0b003e00                __sp_irq = (__sp_svc - 0x100)
+                0x0b003d00                __sp_usr = (__sp_irq - 0x100)
+
+.init           0x02000000      0x21c
+                0x02000000                __text_start = .
+ *(.init)
+ .init          0x02000000      0x210 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb/ds_arm9_crt0.o
+                0x02000000                _start
+ .init          0x02000210        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crti.o
+                0x02000210                _init
+ .init          0x02000214        0x8 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtn.o
+                0x0200021c                . = ALIGN (0x4)
+
+.plt
+ *(.plt)
+
+.text           0x02000220     0x1770
+ *(EXCLUDE_FILE(*.itcm*) .text)
+ .text          0x02000220        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb/ds_arm9_crt0.o
+ .text          0x02000220        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crti.o
+ .text          0x02000220       0x6c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtbegin.o
+ .text          0x0200028c        0x0 pic.o
+ .text          0x0200028c        0x4 libnds_exit.o
+                0x0200028c                __libnds_exit
+ .text          0x02000290       0x70 bioscalls.o
+                0x02000290                swiSoftReset
+                0x02000294                swiDelay
+                0x02000298                swiIntrWait
+                0x0200029c                swiWaitForVBlank
+                0x020002a0                swiWaitForIRQ
+                0x020002a4                swiDivide
+                0x020002a8                swiRemainder
+                0x020002ae                swiDivMod
+                0x020002ba                swiCopy
+                0x020002be                swiFastCopy
+                0x020002c2                swiSqrt
+                0x020002c6                swiCRC16
+                0x020002ca                swiIsDebugger
+                0x020002ce                swiUnpackBits
+                0x020002d2                swiDecompressLZSSWram
+                0x020002d6                swiDecompressLZSSVram
+                0x020002da                swiDecompressHuffman
+                0x020002de                swiDecompressRLEWram
+                0x020002e2                swiDecompressRLEVram
+                0x020002e6                swiDecodeDelta8
+                0x020002ea                swiDecodeDelta16
+                0x020002ee                swiSetHaltCR
+ .text          0x02000300       0x70 dcache.o
+                0x02000300                DC_FlushAll
+                0x0200032c                DC_FlushRange
+                0x02000348                DC_InvalidateAll
+                0x02000354                DC_InvalidateRange
+ .text          0x02000370       0xcc debug.o
+                0x02000370                flushCaches
+                0x02000380                breakPoint
+                0x0200038c                drawDebugString
+ .text          0x0200043c      0x29c dma.o
+                0x0200043c                dmaTransfer
+                0x02000488                dmaCopyWords
+                0x020004c8                dmaCopyHalfWords
+                0x02000508                dmaCopy
+                0x0200054c                dmaCopyWordsAsync
+                0x02000588                dmaCopyHalfWordsAsync
+                0x020005c4                dmaCopyAsync
+                0x020005ec                dmaFillWords
+                0x0200063c                dmaFillHalfWords
+ .text          0x020006d8      0x23c fxBasicWipes.o
+                0x020006d8                fxBasicWipes
+ .text          0x02000914      0x4e4 fxCrossWipe.o
+                0x02000914                fxCrossWipe
+ .text          0x02000df8       0xc0 fxFade.o
+                0x02000df8                fxFade
+ .text          0x02000eb8       0xc0 fxMosaic.o
+                0x02000eb8                fxMosaic
+ .text          0x02000f78       0x54 fxRaster.o
+                0x02000f78                fxRaster
+ .text          0x02000fcc      0x100 fxScanline.o
+                0x02000fcc                fxScanline
+ .text          0x020010cc      0x2e8 fxSpotlight.o
+                0x020010cc                fxSpotlight
+ .text          0x020013b4       0x9c initvideo.o
+                0x020013b4                initVideo
+ .text          0x02001450       0xc8 interruptDispatcher.o
+                0x02001450                IntrMain
+ .text          0x02001518      0x1ac interrupts.o
+                0x02001518                irqSet
+                0x02001564                irqInit
+                0x020015cc                irqEnable
+                0x02001614                irqDisable
+                0x0200165c                irqClear
+ .text          0x020016c4       0x20 main.o
+                0x020016c4                initSystem
+                0x020016c8                main
+ .text          0x020016e4      0x1d4 mpu_setup.o
+                0x020016e4                __libnds_mpu_setup
+                0x02001844                memCached
+                0x0200185c                memUncached
+ .text          0x020018b8        0x0 sinus.o
+ .text          0x020018b8       0x84 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libg.a(lib_a-init.o)
+                0x020018b8                __libc_fini_array
+                0x020018e8                __libc_init_array
+ .text          0x0200193c        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libsysbase.a(malloc_vars.o)
+ .text          0x0200193c       0x54 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libsysbase.a(build_argv.o)
+                0x0200193c                build_argv
+ .text          0x02001990        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtend.o
+ .text          0x02001990        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtn.o
+ *(.text.*)
+ *(.stub)
+ *(.gnu.warning)
+ *(.gnu.linkonce.t*)
+ *(.glue_7)
+ .glue_7        0x00000000        0x0 linker stubs
+ *(.glue_7t)
+ .glue_7t       0x00000000        0x0 linker stubs
+                0x02001990                . = ALIGN (0x4)
+
+.vfp11_veneer   0x00000000        0x0 load address 0x02001990
+ .vfp11_veneer  0x00000000        0x0 linker stubs
+
+.v4_bx          0x00000000        0x0 load address 0x02001990
+ .v4_bx         0x00000000        0x0 linker stubs
+
+.fini           0x02001990        0xc
+ *(.fini)
+ .fini          0x02001990        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crti.o
+                0x02001990                _fini
+ .fini          0x02001994        0x8 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtn.o
+                0x0200199c                __text_end = .
+
+.rodata         0x0200199c     0xaa00
+ *(.rodata)
+ .rodata        0x0200199c     0xaa00 pic.o
+                0x0200199c                picTiles
+                0x0200bb9c                picMap
+                0x0200c19c                picPal
+ *all.rodata*(*)
+ *(.roda)
+ *(.rodata.*)
+ *(.gnu.linkonce.r*)
+                0x0200c39c                . = ALIGN (0x4)
+
+.ARM.extab
+ *(.ARM.extab* .gnu.linkonce.armextab.*)
+                0x0200c39c                __exidx_start = .
+
+.ARM.exidx
+ *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+                0x0200c39c                __exidx_end = .
+                0x0200c39c                . = ALIGN (0x4)
+                0x0200c39c                PROVIDE (__preinit_array_start, .)
+
+.preinit_array
+ *(.preinit_array)
+                0x0200c39c                PROVIDE (__preinit_array_end, .)
+                0x0200c39c                PROVIDE (__init_array_start, .)
+
+.init_array     0x0200c39c        0x4
+ *(.init_array)
+ .init_array    0x0200c39c        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtbegin.o
+                0x0200c3a0                PROVIDE (__init_array_end, .)
+                0x0200c3a0                PROVIDE (__fini_array_start, .)
+
+.fini_array     0x0200c3a0        0x4
+ *(.fini_array)
+ .fini_array    0x0200c3a0        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtbegin.o
+                0x0200c3a4                PROVIDE (__fini_array_end, .)
+
+.ctors          0x0200c3a4        0x0
+ *crtbegin.o(.ctors)
+ *(EXCLUDE_FILE(*crtend.o) .ctors)
+ *(SORT(.ctors.*))
+ *(.ctors)
+                0x0200c3a4                . = ALIGN (0x4)
+
+.dtors          0x0200c3a4        0x0
+ *crtbegin.o(.dtors)
+ *(EXCLUDE_FILE(*crtend.o) .dtors)
+ *(SORT(.dtors.*))
+ *(.dtors)
+                0x0200c3a4                . = ALIGN (0x4)
+
+.eh_frame       0x0200c3a4        0x4
+ *(.eh_frame)
+ .eh_frame      0x0200c3a4        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtbegin.o
+ .eh_frame      0x0200c3a4        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtend.o
+                0x0200c3a8                . = ALIGN (0x4)
+
+.gcc_except_table
+                0x0200c3a8        0x0
+ *(.gcc_except_table)
+                0x0200c3a8                . = ALIGN (0x4)
+
+.jcr            0x0200c3a8        0x4
+ *(.jcr)
+ .jcr           0x0200c3a8        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtbegin.o
+ .jcr           0x0200c3a8        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtend.o
+
+.got
+ *(.got.plt)
+ *(.got)
+ *(.rel.got)
+
+.ewram          0x0200c3ac        0x0
+                0x0200c3ac                __ewram_start = ABSOLUTE (.)
+ *(.ewram)
+ *ewram.*(.text)
+                0x0200c3ac                . = ALIGN (0x4)
+
+.data           0x0200c3ac      0x16c
+                0x0200c3ac                __data_start = ABSOLUTE (.)
+ *(.data)
+ .data          0x0200c3ac        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb/ds_arm9_crt0.o
+ .data          0x0200c3ac        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crti.o
+ .data          0x0200c3ac        0x4 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtbegin.o
+                0x0200c3ac                __dso_handle
+ .data          0x0200c3b0        0x0 pic.o
+ .data          0x0200c3b0        0x0 libnds_exit.o
+ .data          0x0200c3b0        0x0 bioscalls.o
+ .data          0x0200c3b0        0x0 dcache.o
+ .data          0x0200c3b0       0x25 debug.o
+                0x0200c3b0                debugString
+ .data          0x0200c3d5        0x0 dma.o
+ *fill*         0x0200c3d5        0x3 ff
+ .data          0x0200c3d8        0x8 fxBasicWipes.o
+ .data          0x0200c3e0       0x14 fxCrossWipe.o
+ .data          0x0200c3f4        0x8 fxFade.o
+ .data          0x0200c3fc        0x8 fxMosaic.o
+ .data          0x0200c404        0x4 fxRaster.o
+ .data          0x0200c408        0x4 fxScanline.o
+ .data          0x0200c40c        0xc fxSpotlight.o
+ .data          0x0200c418        0x0 initvideo.o
+ .data          0x0200c418        0x0 interruptDispatcher.o
+ .data          0x0200c418        0x0 interrupts.o
+ .data          0x0200c418        0x0 main.o
+ .data          0x0200c418        0x0 mpu_setup.o
+ .data          0x0200c418      0x100 sinus.o
+                0x0200c418                sinTable
+ .data          0x0200c518        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libg.a(lib_a-init.o)
+ .data          0x0200c518        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libsysbase.a(malloc_vars.o)
+ .data          0x0200c518        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libsysbase.a(build_argv.o)
+ .data          0x0200c518        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtend.o
+ .data          0x0200c518        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtn.o
+ *(.data.*)
+ *(.gnu.linkonce.d*)
+                0x0200c518                . = ALIGN (0x4)
+                0x0200c518                __data_end = ABSOLUTE (.)
+                0x0200c518                __dtcm_lma = .
+                0x0200c518                __bss_vma = .
+
+.dtcm           0x0b000000        0x0 load address 0x0200c518
+ *(.dtcm)
+ *(.dtcm.*)
+                0x0b000000                . = ALIGN (0x4)
+                0x0b000000                __dtcm_end = ABSOLUTE (.)
+                0x0200c518                __itcm_lma = (__dtcm_lma + SIZEOF (.dtcm))
+
+.itcm           0x01000100       0xc8 load address 0x0200c518
+ *(.itcm)
+ .itcm          0x01000100       0xc8 interrupts.o
+                0x01000100                irqTable
+ *itcm.*(.text)
+                0x010001c8                . = ALIGN (0x4)
+                0x010001c8                __itcm_end = ABSOLUTE (.)
+                0x0200c5e0                __vectors_lma = (__itcm_lma + SIZEOF (.itcm))
+
+.vectors        0x01000000        0x0 load address 0x0200c5e0
+ *(.vectors)
+ *vectors.*(.text)
+                0x01000000                . = ALIGN (0x4)
+                0x01000000                __vectors_end = ABSOLUTE (.)
+
+.sbss           0x0b000000        0x0
+                0x0b000000                __sbss_start = ABSOLUTE (.)
+                0x0b000000                __sbss_start__ = ABSOLUTE (.)
+ *(.sbss)
+                0x0b000000                . = ALIGN (0x4)
+                0x0b000000                __sbss_end = ABSOLUTE (.)
+
+.bss            0x0200c518      0x1a8
+                0x0200c518                __bss_start = ABSOLUTE (.)
+                0x0200c518                __bss_start__ = ABSOLUTE (.)
+ *(.dynbss)
+ *(.gnu.linkonce.b*)
+ *(.bss*)
+ .bss           0x0200c518        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb/ds_arm9_crt0.o
+ .bss           0x0200c518        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crti.o
+ .bss           0x0200c518       0x1c c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtbegin.o
+ .bss           0x0200c534        0x0 pic.o
+ .bss           0x0200c534        0x0 libnds_exit.o
+ .bss           0x0200c534        0x0 bioscalls.o
+ .bss           0x0200c534        0x0 dcache.o
+ .bss           0x0200c534        0x0 debug.o
+ .bss           0x0200c534        0x0 dma.o
+ .bss           0x0200c534        0x0 fxBasicWipes.o
+ .bss           0x0200c534        0x0 fxCrossWipe.o
+ .bss           0x0200c534        0x0 fxFade.o
+ .bss           0x0200c534        0x0 fxMosaic.o
+ .bss           0x0200c534        0x0 fxRaster.o
+ .bss           0x0200c534        0x0 fxScanline.o
+ .bss           0x0200c534      0x182 fxSpotlight.o
+ .bss           0x0200c6b6        0x0 initvideo.o
+ .bss           0x0200c6b6        0x0 interruptDispatcher.o
+ .bss           0x0200c6b6        0x0 interrupts.o
+ .bss           0x0200c6b6        0x0 main.o
+ .bss           0x0200c6b6        0x0 mpu_setup.o
+ .bss           0x0200c6b6        0x0 sinus.o
+ .bss           0x0200c6b6        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libg.a(lib_a-init.o)
+ *fill*         0x0200c6b6        0x2 00
+ .bss           0x0200c6b8        0x8 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libsysbase.a(malloc_vars.o)
+                0x0200c6b8                fake_heap_end
+                0x0200c6bc                fake_heap_start
+ .bss           0x0200c6c0        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libsysbase.a(build_argv.o)
+ .bss           0x0200c6c0        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtend.o
+ .bss           0x0200c6c0        0x0 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtn.o
+ *(COMMON)
+                0x0200c6c0                . = ALIGN (0x4)
+                0x0200c6c0                __bss_end = ABSOLUTE (.)
+                0x0200c6c0                __bss_end__ = __bss_end
+                0x0200c6c0                _end = __bss_end__
+                0x0200c6c0                __end__ = __bss_end__
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.ARM.attributes
+                0x00000000       0x2d load address 0x0200c518
+ .ARM.attributes
+                0x00000000       0x21 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb/ds_arm9_crt0.o
+ .ARM.attributes
+                0x00000021       0x20 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crti.o
+ .ARM.attributes
+                0x00000041       0x30 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtbegin.o
+ .ARM.attributes
+                0x00000071       0x20 pic.o
+ .ARM.attributes
+                0x00000091       0x27 libnds_exit.o
+ .ARM.attributes
+                0x000000b8       0x20 bioscalls.o
+ .ARM.attributes
+                0x000000d8       0x20 dcache.o
+ .ARM.attributes
+                0x000000f8       0x20 debug.o
+ .ARM.attributes
+                0x00000118       0x20 dma.o
+ .ARM.attributes
+                0x00000138       0x20 fxBasicWipes.o
+ .ARM.attributes
+                0x00000158       0x20 fxCrossWipe.o
+ .ARM.attributes
+                0x00000178       0x20 fxFade.o
+ .ARM.attributes
+                0x00000198       0x20 fxMosaic.o
+ .ARM.attributes
+                0x000001b8       0x20 fxRaster.o
+ .ARM.attributes
+                0x000001d8       0x20 fxScanline.o
+ .ARM.attributes
+                0x000001f8       0x20 fxSpotlight.o
+ .ARM.attributes
+                0x00000218       0x20 initvideo.o
+ .ARM.attributes
+                0x00000238       0x20 interruptDispatcher.o
+ .ARM.attributes
+                0x00000258       0x20 interrupts.o
+ .ARM.attributes
+                0x00000278       0x20 main.o
+ .ARM.attributes
+                0x00000298       0x21 mpu_setup.o
+ .ARM.attributes
+                0x000002b9       0x20 sinus.o
+ .ARM.attributes
+                0x000002d9       0x30 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libg.a(lib_a-init.o)
+ .ARM.attributes
+                0x00000309       0x30 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libsysbase.a(malloc_vars.o)
+ .ARM.attributes
+                0x00000339       0x30 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libsysbase.a(build_argv.o)
+ .ARM.attributes
+                0x00000369       0x30 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtend.o
+ .ARM.attributes
+                0x00000399       0x20 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtn.o
+
+.comment        0x00000000       0x22 load address 0x0200c518
+ *(.comment)
+ .comment       0x00000000       0x22 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtbegin.o
+                                 0x23 (size before relaxing)
+ .comment       0x00000000       0x23 libnds_exit.o
+ .comment       0x00000000       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libg.a(lib_a-init.o)
+ .comment       0x00000000       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libsysbase.a(malloc_vars.o)
+ .comment       0x00000000       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libsysbase.a(build_argv.o)
+ .comment       0x00000000       0x23 c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtend.o
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x00000000      0x220 load address 0x0200c518
+ *(.debug_aranges)
+ .debug_aranges
+                0x00000000       0x20 libnds_exit.o
+ .debug_aranges
+                0x00000020       0x20 bioscalls.o
+ .debug_aranges
+                0x00000040       0x20 dcache.o
+ .debug_aranges
+                0x00000060       0x20 debug.o
+ .debug_aranges
+                0x00000080       0x20 dma.o
+ .debug_aranges
+                0x000000a0       0x20 fxBasicWipes.o
+ .debug_aranges
+                0x000000c0       0x20 fxCrossWipe.o
+ .debug_aranges
+                0x000000e0       0x20 fxFade.o
+ .debug_aranges
+                0x00000100       0x20 fxMosaic.o
+ .debug_aranges
+                0x00000120       0x20 fxRaster.o
+ .debug_aranges
+                0x00000140       0x20 fxScanline.o
+ .debug_aranges
+                0x00000160       0x20 fxSpotlight.o
+ .debug_aranges
+                0x00000180       0x20 initvideo.o
+ .debug_aranges
+                0x000001a0       0x20 interruptDispatcher.o
+ .debug_aranges
+                0x000001c0       0x20 interrupts.o
+ .debug_aranges
+                0x000001e0       0x20 main.o
+ .debug_aranges
+                0x00000200       0x20 mpu_setup.o
+
+.debug_pubnames
+                0x00000000       0x24 load address 0x0200c518
+ *(.debug_pubnames)
+ .debug_pubnames
+                0x00000000       0x24 libnds_exit.o
+
+.debug_info     0x00000000      0x83b load address 0x0200c518
+ *(.debug_info)
+ .debug_info    0x00000000       0x4f libnds_exit.o
+ .debug_info    0x0000004f       0x7f bioscalls.o
+ .debug_info    0x000000ce       0x7c dcache.o
+ .debug_info    0x0000014a       0x7b debug.o
+ .debug_info    0x000001c5       0x79 dma.o
+ .debug_info    0x0000023e       0x82 fxBasicWipes.o
+ .debug_info    0x000002c0       0x81 fxCrossWipe.o
+ .debug_info    0x00000341       0x7c fxFade.o
+ .debug_info    0x000003bd       0x7e fxMosaic.o
+ .debug_info    0x0000043b       0x7e fxRaster.o
+ .debug_info    0x000004b9       0x80 fxScanline.o
+ .debug_info    0x00000539       0x81 fxSpotlight.o
+ .debug_info    0x000005ba       0x7f initvideo.o
+ .debug_info    0x00000639       0x89 interruptDispatcher.o
+ .debug_info    0x000006c2       0x80 interrupts.o
+ .debug_info    0x00000742       0x7a main.o
+ .debug_info    0x000007bc       0x7f mpu_setup.o
+
+.debug_abbrev   0x00000000      0x183 load address 0x0200c518
+ *(.debug_abbrev)
+ .debug_abbrev  0x00000000       0x43 libnds_exit.o
+ .debug_abbrev  0x00000043       0x14 bioscalls.o
+ .debug_abbrev  0x00000057       0x14 dcache.o
+ .debug_abbrev  0x0000006b       0x14 debug.o
+ .debug_abbrev  0x0000007f       0x14 dma.o
+ .debug_abbrev  0x00000093       0x14 fxBasicWipes.o
+ .debug_abbrev  0x000000a7       0x14 fxCrossWipe.o
+ .debug_abbrev  0x000000bb       0x14 fxFade.o
+ .debug_abbrev  0x000000cf       0x14 fxMosaic.o
+ .debug_abbrev  0x000000e3       0x14 fxRaster.o
+ .debug_abbrev  0x000000f7       0x14 fxScanline.o
+ .debug_abbrev  0x0000010b       0x14 fxSpotlight.o
+ .debug_abbrev  0x0000011f       0x14 initvideo.o
+ .debug_abbrev  0x00000133       0x14 interruptDispatcher.o
+ .debug_abbrev  0x00000147       0x14 interrupts.o
+ .debug_abbrev  0x0000015b       0x14 main.o
+ .debug_abbrev  0x0000016f       0x14 mpu_setup.o
+
+.debug_line     0x00000000      0xbac load address 0x0200c518
+ *(.debug_line)
+ .debug_line    0x00000000       0x62 libnds_exit.o
+ .debug_line    0x00000062       0x92 bioscalls.o
+ .debug_line    0x000000f4       0x80 dcache.o
+ .debug_line    0x00000174       0x74 debug.o
+ .debug_line    0x000001e8      0x10f dma.o
+ .debug_line    0x000002f7       0xea fxBasicWipes.o
+ .debug_line    0x000003e1      0x191 fxCrossWipe.o
+ .debug_line    0x00000572       0x89 fxFade.o
+ .debug_line    0x000005fb       0x8c fxMosaic.o
+ .debug_line    0x00000687       0x71 fxRaster.o
+ .debug_line    0x000006f8       0x99 fxScanline.o
+ .debug_line    0x00000791      0x117 fxSpotlight.o
+ .debug_line    0x000008a8       0x7e initvideo.o
+ .debug_line    0x00000926       0x9b interruptDispatcher.o
+ .debug_line    0x000009c1       0xc5 interrupts.o
+ .debug_line    0x00000a86       0x66 main.o
+ .debug_line    0x00000aec       0xc0 mpu_setup.o
+
+.debug_frame    0x00000000       0x28 load address 0x0200c518
+ *(.debug_frame)
+ .debug_frame   0x00000000       0x28 libnds_exit.o
+
+.debug_str      0x00000000       0x4f load address 0x0200c518
+ *(.debug_str)
+ .debug_str     0x00000000       0x4f libnds_exit.o
+
+.debug_loc      0x00000000       0x1f load address 0x0200c518
+ *(.debug_loc)
+ .debug_loc     0x00000000       0x1f libnds_exit.o
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.stack          0x00080000        0x0 load address 0x0200c518
+                0x00080000                _stack = .
+ *(.stack)
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb/ds_arm9_crt0.o
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crti.o
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtbegin.o
+LOAD pic.o
+LOAD libnds_exit.o
+LOAD bioscalls.o
+LOAD dcache.o
+LOAD debug.o
+LOAD dma.o
+LOAD fxBasicWipes.o
+LOAD fxCrossWipe.o
+LOAD fxFade.o
+LOAD fxMosaic.o
+LOAD fxRaster.o
+LOAD fxScanline.o
+LOAD fxSpotlight.o
+LOAD initvideo.o
+LOAD interruptDispatcher.o
+LOAD interrupts.o
+LOAD main.o
+LOAD mpu_setup.o
+LOAD sinus.o
+START GROUP
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb\libgcc.a
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libg.a
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libc.a
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/../../../../arm-eabi/lib/thumb\libsysbase.a
+END GROUP
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtend.o
+LOAD c:/devkitpro/devkitarm/bin/../lib/gcc/arm-eabi/4.4.2/thumb/crtn.o
+OUTPUT(c:/devkitPro/source/nds/fx/arm9/fx.arm9.elf elf32-littlearm)
