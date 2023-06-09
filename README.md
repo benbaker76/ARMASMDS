@@ -54,9 +54,11 @@ You need to open the MyProject.pnproj file in notepad and change the <Project na
 
 Now you will need to view the attached images which will guide you through setting up iDeaS to run when you select Tools->run from the menu.
 
-[Screenshot1](images/PNote1.png)
-[Screenshot2](images/PNote2.png)
-[Screenshot3](images/PNote3.png)
+![](images/PNote1.png)
+
+![](images/PNote2.png)
+
+![](images/PNote3.png)
 
 # Compiling your first NDS ASM binary
 
