@@ -2,9 +2,9 @@
 
 Some tutorials. Including instructions for setting up Programmers Notepad for ARM ASM hilighting.
 
-NOTE: You will need our modified version of [grit](tools/grit.zip) to compile
+**NOTE:** You will need our modified version of [grit](tools/grit.zip) to compile
 
-# Setting up the compiler
+## Setting up the compiler
 
 1. Download the latest version of DevKitPro from http://www.devkitpro.org/ (currently devkitProUpdater-1.4.9.exe)
 2. Run the installer and select to download and install the full package (this includes tools for compiling GBA/NDS/GP32/PSP/GameCube/Wii binaries)
@@ -21,14 +21,14 @@ NOTE: You will need our modified version of [grit](tools/grit.zip) to compile
 5. Create a folder called devkitPro\source\gba and devkitPro\source\nds
 6. Your ready to go!
 
-## NOTES:
+**NOTES:**
 
 - I also suggest you take a look at GBATek for technical info on the GBA & NDS
 - Also check out the PDF cheat sheet for a quick guide to the ARM instruction set
 - For Windows XP I recommend the Command Line Here tool so you can right click in a folder to open the command prompt for compiling.
 - lec09_ARMasm is a simple power point presentation introducing some of the basic aspects of the ARM processor
 
-# Setting up Programmers Notepad
+## Setting up Programmers Notepad
 
 Here's a quick guide to using Programmers Notepad as an IDE for compiling NDS binaries. The first thing I noticed is that the templates were all messed up in my examples I posted so I have fixed them all and reposted them.
 
@@ -42,13 +42,11 @@ First of all the syntax hilighting is not really working for arm so I added some
 
 Now we should have syntax hilighting working okay. Next we will look at the 3 most important features of this IDE.
 
-Under the Tools menu you will see "make", "clean" and "run".
+Under the Tools menu you will see `make`, `clean` and `run`.
 
-* "make" - will simply call make on the makefile and build the project.
-
-* "clean" - will clean the project and compile fresh. This is important if major changes were made and the project needs a complete recompile
-
-* "run" - This should launch the emulator and run your compiled .nds file. By default this is not set up but I have reuploaded the projects and changed this.
+- `make` - will simply call make on the makefile and build the project.
+- `clean` - will clean the project and compile fresh. This is important if major changes were made and the project needs a complete recompile
+- `run` - This should launch the emulator and run your compiled .nds file. By default this is not set up but I have reuploaded the projects and changed this.
 
 You need to open the MyProject.pnproj file in notepad and change the <Project name="template"> to be <Project name="MyProject"> replacing "MyProject" with the name of your project and it must match the name of the compiled .nds (Eg. MyProject.nds).
 
@@ -60,7 +58,7 @@ Now you will need to view the attached images which will guide you through setti
 
 ![](images/PNote3.png)
 
-# Compiling your first NDS ASM binary
+## Compiling your first NDS ASM binary
 
 1. If you haven't already followed the Setting up the compiler I suggest you do that first
 2. Take a look at helloworld helloworld.zip
@@ -109,9 +107,11 @@ nf: b nf                    @ Sit in an infinite loop to finish
 
 3. Run "make" from the command line to compile
 
+![](/images/test.png)
+
 This is based on Two9A's The Smallest NDS File source. All the demo source available in this repo updated for devkitARM r27
 
-# Grit
+## Grit
 
 Our version of grit adds an option (-mp) which allows you to specifiy the palette number for map's. This is handy if your using 16 color tiles and need to share a palette and the palette isn't at entry 0.
 
@@ -125,7 +125,17 @@ To use palette 15 for example add the following to your grit file:
 
 Another command line option we added is called called "-fha" which means to output the header file in assembly format.
 
-# Thanks
+## Screenshots
+
+![](/images/showpic.png)
+
+![](/images/dualpics.png)
+
+![](/images/text.png)
+
+![](/images/sprites.png)
+
+## Thanks
 
 Wintermute for devkitARM, Chishm for libfat, Martin Koth for DSTek & No$GBA, Eris & Noda for EFS / NitroFS. Also thanks go to LiraNuna, Blasty, Strager, Two9A, Cearn, Dovoto, Jasper, Joat, Dekutree, Elhobbs, Ruben, SimonB, DarkCloud and everyone on gbadev.org.
 
